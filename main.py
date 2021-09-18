@@ -4,6 +4,7 @@ import requests
 import json
 import random
 from replit import db
+from keep_alive import keep_alive
 
 client = discord.Client()
 
@@ -67,7 +68,7 @@ async def on_message(message):
 		await message.channel.send("New encouraging message added.")
 
 	if msg.startswith("$del"):
-		encouragements = []
+		encouragements = [] # 메세지 목록이 비어있을 경우를 위해 빈 목록 생성
 		if "encouragements" in db.keys():
 			index = int(msg.split("$del", 1)[1])
 			delete_encouragement(index)
@@ -83,11 +84,12 @@ async def on_message(message):
 	if msg.startswith("$responding"):
 		value = msg.split("$responding ", 1)[1]
 
-		if value.lower() == "true":
+		if value.lower() == "true": # 소문자 혹은 대문자로 입력하더라도 소문자로 변환
 			db["responding"] = True
-			await message.channel.send("Responding is on.")
+			await message.channel.send("Responding is on")
 		else:
 			db["responding"] = False
 			await message.channel.send("Responding is off.")
 
+keep_alive() # 웹 서버 실행
 client.run(os.environ['TOKEN'])
